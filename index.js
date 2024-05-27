@@ -134,7 +134,7 @@ bot.hears("Случайный мем", function (ctx) {
     sendRandomMeme(ctx);
 });
 bot.command("pashalka", function (ctx) {
-    ctx.replyWithPhoto('https://upyachka.io/img/up4kman.gif', {
+    ctx.replyWithAnimation("https://upyachka.io/img/up4kman.gif", {
         reply_markup: memeKeyboard
     });
 });

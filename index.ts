@@ -90,7 +90,7 @@ bot.hears("Случайный мем", (ctx) => {
 })
 
 bot.command("pashalka", (ctx) => {
-  ctx.replyWithPhoto('https://upyachka.io/img/up4kman.gif', {
+  ctx.replyWithAnimation("https://upyachka.io/img/up4kman.gif", {
     reply_markup: memeKeyboard
   });
 })
