@@ -59,9 +59,13 @@ var MEMIFY = {
     query: ".card > figure > a",
     attr: "href"
 };
-var ANEKDOT = {
+var ANEKDOTMEME = {
     query: ".topicbox > .text > img",
     attr: "src"
+};
+var ANEKDOT = {
+    query: ".topicbox > .text",
+    attr: ""
 };
 var bot = new grammy_1.Bot(BOT_TOKEN);
 function getMemes() {
@@ -91,7 +95,7 @@ function getMemes() {
                                 _d = {};
                                 return [4 /*yield*/, response.text()];
                             case 5:
-                                _b.apply(void 0, [__assign.apply(void 0, [(_d.src = _e.sent(), _d), ANEKDOT])]);
+                                _b.apply(void 0, [__assign.apply(void 0, [(_d.src = _e.sent(), _d), ANEKDOTMEME])]);
                                 _e.label = 6;
                             case 6: return [2 /*return*/];
                         }
@@ -130,10 +134,7 @@ bot.hears("Случайный мем", function (ctx) {
     sendRandomMeme(ctx);
 });
 bot.command("pashalka", function (ctx) {
-    ctx.reply("СВОБОДА! РАВЕНСТВО! УПЯЧКА!\n" +
-        "УПЯЧКА СЛЕДИТ ЗА ТОБОЙ!!!\n");
-    ctx.reply('https://upyachka.io/img/up4kman.gif');
-    ctx.reply('УПЯЧКА!!!!!11111', {
+    ctx.replyWithPhoto('https://upyachka.io/img/up4kman.gif', {
         reply_markup: memeKeyboard
     });
 });

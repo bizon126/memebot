@@ -90,10 +90,7 @@ bot.hears("Случайный мем", (ctx) => {
 })
 
 bot.command("pashalka", (ctx) => {
-  ctx.reply("СВОБОДА! РАВЕНСТВО! УПЯЧКА!\n" +
-    "УПЯЧКА СЛЕДИТ ЗА ТОБОЙ!!!\n");
-  ctx.reply('https://upyachka.io/img/up4kman.gif');
-  ctx.reply('УПЯЧКА!!!!!11111', {
+  ctx.replyWithPhoto('https://upyachka.io/img/up4kman.gif', {
     reply_markup: memeKeyboard
   });
 })
