@@ -23,10 +23,10 @@ bot.command("start", (ctx) => ctx.reply("Привет! Нажми кнопку �
 
 bot.command("meme", (ctx) => {
   getMemes().then((res) => {
-    let arr = [];
+    let arr: string[] = [];
     const dom = new JSDOM(res);
     dom.window.document.querySelectorAll(".card > figure > a").forEach((el) => {
-      arr.push(el.getAttribute('href'))
+      arr.push(<string>el.getAttribute('href'))
     });
 
     ctx.reply(arr[Math.floor(Math.random() * 5)], {
