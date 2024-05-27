@@ -1,8 +1,10 @@
 import {Bot, Keyboard} from "grammy";
-import "dotenv/config";
 import fetch from "node-fetch";
 import { JSDOM } from "jsdom"
+import * as dotenv from "dotenv";
 
+
+dotenv.config();
 
 const BOT_TOKEN: string | undefined = process?.env?.BOT_TOKEN;
 const DEST = 'https://www.memify.ru/highfive/';

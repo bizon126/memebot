@@ -38,9 +38,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 var grammy_1 = require("grammy");
-require("dotenv/config");
 var node_fetch_1 = require("node-fetch");
 var jsdom_1 = require("jsdom");
+var dotenv = require("dotenv");
+dotenv.config({ path: __dirname + '/.env' });
 var BOT_TOKEN = (_a = process === null || process === void 0 ? void 0 : process.env) === null || _a === void 0 ? void 0 : _a.BOT_TOKEN;
 var DEST = 'https://www.memify.ru/highfive/';
 var bot = new grammy_1.Bot(BOT_TOKEN);
