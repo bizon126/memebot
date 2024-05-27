@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -41,38 +52,82 @@ var grammy_1 = require("grammy");
 var node_fetch_1 = require("node-fetch");
 var jsdom_1 = require("jsdom");
 var dotenv = require("dotenv");
-dotenv.config({ path: __dirname + '/.env' });
+dotenv.config();
 var BOT_TOKEN = (_a = process === null || process === void 0 ? void 0 : process.env) === null || _a === void 0 ? void 0 : _a.BOT_TOKEN;
-var DEST = 'https://www.memify.ru/highfive/';
+var DEST = ["https://www.memify.ru/highfive/", "https://www.anekdot.ru/random/mem/"];
+var MEMIFY = {
+    query: ".card > figure > a",
+    attr: "href"
+};
+var ANEKDOT = {
+    query: ".topicbox > .text > img",
+    attr: "src"
+};
 var bot = new grammy_1.Bot(BOT_TOKEN);
 function getMemes() {
     return __awaiter(this, void 0, void 0, function () {
-        var response;
+        var _this = this;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    response = (0, node_fetch_1.default)(DEST);
-                    return [4 /*yield*/, response];
-                case 1: return [2 /*return*/, (_a.sent()).text()];
-            }
+            return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+                    var response, _a, _b;
+                    var _c, _d;
+                    return __generator(this, function (_e) {
+                        switch (_e.label) {
+                            case 0: return [4 /*yield*/, (0, node_fetch_1.default)(DEST[0])];
+                            case 1:
+                                response = _e.sent();
+                                if (!response.ok) return [3 /*break*/, 3];
+                                _a = resolve;
+                                _c = {};
+                                return [4 /*yield*/, response.text()];
+                            case 2:
+                                _a.apply(void 0, [__assign.apply(void 0, [(_c.src = _e.sent(), _c), MEMIFY])]);
+                                return [3 /*break*/, 6];
+                            case 3: return [4 /*yield*/, (0, node_fetch_1.default)(DEST[1])];
+                            case 4:
+                                response = _e.sent();
+                                if (!response.ok) return [3 /*break*/, 6];
+                                _b = resolve;
+                                _d = {};
+                                return [4 /*yield*/, response.text()];
+                            case 5:
+                                _b.apply(void 0, [__assign.apply(void 0, [(_d.src = _e.sent(), _d), ANEKDOT])]);
+                                _e.label = 6;
+                            case 6: return [2 /*return*/];
+                        }
+                    });
+                }); })];
         });
     });
 }
-var memeKeyboard = new grammy_1.Keyboard().placeholder('Случайный мем').text('/meme').row().resized();
+function parse(domString, query, attr) {
+    var dom = new jsdom_1.JSDOM(domString);
+    return dom.window.document.querySelector(query).getAttribute(attr);
+}
+function sendRandomMeme(ctx) {
+    getMemes()
+        .catch(function (err) { return console.error(err); })
+        .then(function (res) {
+        if (!res) {
+            ctx.reply("Какая-то ошибка");
+        }
+        else {
+            var memeURL = parse(res.src, res.query, res.attr);
+            ctx.replyWithPhoto(memeURL, {
+                reply_markup: memeKeyboard,
+            });
+        }
+    });
+}
+var memeKeyboard = new grammy_1.Keyboard().text('Случайный мем').row().resized();
 bot.command("start", function (ctx) { return ctx.reply("Привет! Нажми кнопку и получи случайный мем )", {
     reply_markup: memeKeyboard,
 }); });
 bot.command("meme", function (ctx) {
-    getMemes().then(function (res) {
-        var arr = [];
-        var dom = new jsdom_1.JSDOM(res);
-        dom.window.document.querySelectorAll(".card > figure > a").forEach(function (el) {
-            arr.push(el.getAttribute('href'));
-        });
-        ctx.reply(arr[Math.floor(Math.random() * 5)], {
-            reply_markup: memeKeyboard,
-        });
-    });
+    sendRandomMeme(ctx);
+});
+bot.hears("Случайный мем", function (ctx) {
+    sendRandomMeme(ctx);
 });
 bot.command("pashalka", function (ctx) {
     ctx.reply("СВОБОДА! РАВЕНСТВО! УПЯЧКА!\n" +
@@ -85,4 +140,18 @@ bot.command("pashalka", function (ctx) {
 bot.on("message", function (ctx) { return ctx.reply("Продолжай...", {
     reply_markup: memeKeyboard
 }); });
+bot.catch(function (err) {
+    var ctx = err.ctx;
+    console.error("Error while handling update ".concat(ctx.update.update_id, ":"));
+    var e = err.error;
+    if (e instanceof grammy_1.GrammyError) {
+        console.error('Error in request:', e.description);
+    }
+    else if (e instanceof grammy_1.HttpError) {
+        console.error('Could not contact Telegram:', e);
+    }
+    else {
+        console.error('Unknown error:', e);
+    }
+});
 bot.start();
